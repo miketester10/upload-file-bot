@@ -1,0 +1,21 @@
+services:
+  UploadFileBot:
+    image: node:20-slim
+    container_name: UploadFileBot
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - TZ=Europe/Rome  # imposta la timezone italiana
+    restart: unless-stopped
+    mem_limit: 1000m
+    memswap_limit: 1000m
+    command: ["sh", "-c", "npm install --include=dev && npm run start"]
+    networks:
+      - telegram-bot-network
+
+networks:
+  telegram-bot-network:
+    external: true

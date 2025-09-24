@@ -1,0 +1,30 @@
+{
+  "name": "telegram-local-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon  --watch src --exec ts-node src/main.ts",
+    "start": "ts-node src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.12.2",
+    "dotenv": "^17.2.2",
+    "file-type": "^21.0.0",
+    "fs": "^0.0.1-security",
+    "gramio": "^0.4.11",
+    "pino": "^9.11.0",
+    "pino-pretty": "^13.1.1",
+    "pretty-bytes": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
