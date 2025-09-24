@@ -12,7 +12,7 @@ const LOCAL_BOT_API = process.env.LOCAL_BOT_API!;
 
 const bot = new Bot(BOT_TOKEN, { api: { baseURL: LOCAL_BOT_API } });
 
-// Comando /start
+// Gestionre comando /start
 bot.command("start", async (ctx) => {
   const telegramId = ctx.from?.id!;
   const name = ctx.from?.firstName!;
@@ -33,26 +33,25 @@ bot.command("start", async (ctx) => {
 
 // Gestione dei messaggi con file
 bot.on("message", async (ctx) => {
+  // Controllo che il file è presente nel messaggio inviato e che abbia un nome
   const file = ctx.document;
   if (!file) return;
-
-  // Controlla che il file abbia un nome originale
   if (!file.fileName) {
     return await ctx.reply(format`${code(`❌ File must have a name.`)}`);
   }
 
-  // Primo messaggio di stato
+  // Messaggio di stato
   const statusMessage = await ctx.reply(`[⏳] Download file...`);
 
   let finalPath: string | undefined;
   try {
-    // Download del file dall' API locale di Telegram
+    // Download del file dall' API locale di Telegram (server locale avviato con docker)
     const downloadedFile = await bot.api.getFile({ file_id: file.fileId });
 
-    // Costruisci il percorso pulito e rinomina il file
+    // Costruisce il percorso finale e rinomina il file
     finalPath = await prepareFilePath(downloadedFile.file_path!, file.fileName, BOT_TOKEN);
 
-    // Aggiorna messaggio
+    // Aggiorna messaggio di stato
     await ctx.editMessageText(format`${bold(`[✅] Download file`)}\n[⏳] Upload file...`, { chat_id: ctx.chat.id, message_id: statusMessage.id });
 
     // Upload del file (filebin.net)

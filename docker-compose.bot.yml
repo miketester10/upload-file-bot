@@ -1,6 +1,6 @@
 services:
   UploadFileBot:
-    image: node:20-slim
+    image: node:20
     container_name: UploadFileBot
     working_dir: /app
     volumes:
@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     environment:
-      - TZ=Europe/Rome  # imposta la timezone italiana
+      - TZ=Europe/Rome
     restart: unless-stopped
     mem_limit: 1000m
     memswap_limit: 1000m

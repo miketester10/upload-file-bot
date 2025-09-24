@@ -19,7 +19,7 @@ export const uploadFile = async (filePath: string, fileName: string, binName: st
     // Crea lo stream del file
     const fileStream = createReadStream(filePath);
 
-    // Ottieni la dimensione del file in modo asincrono
+    // Ottiene la dimensione del file in modo asincrono
     const stats = await fsp.stat(filePath);
     const fileSize = stats.size;
 
@@ -30,6 +30,7 @@ export const uploadFile = async (filePath: string, fileName: string, binName: st
 
     logger.info(`Uploading: ${fileName}, Size: ${prettyBytes(fileSize)}, Type: ${mimetype}`);
 
+    // Effettua la richiesta POST con axios
     await axios.post(url, fileStream, {
       headers: {
         "Content-Type": mimetype,

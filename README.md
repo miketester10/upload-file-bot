@@ -79,16 +79,16 @@ A questo punto, il bot sarà online e pronto a ricevere file!
 
   ```bash
   # Per il bot
-  docker-compose -f docker-compose.bot.yml logs -f
+  docker compose -f docker-compose.bot.yml logs -f
 
   # Per l'API di Telegram
-  docker-compose -f docker-compose.telegram.yml logs -f
+  docker compose -f docker-compose.telegram.yml logs -f
   ```
 
 - **Fermare i servizi**:
   ```bash
-  docker-compose -f docker-compose.bot.yml down
-  docker-compose -f docker-compose.telegram.yml down
+  docker compose -f docker-compose.bot.yml down
+  docker compose -f docker-compose.telegram.yml down
   ```
 
 ---
