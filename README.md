@@ -65,8 +65,8 @@ Il bot è stato sviluppato in **TypeScript** e containerizzato con **Docker** pe
 4.  **Avviare i container**
     Avvia entrambi i servizi (l'API di Telegram e il bot) in background:
     ```bash
-    docker-compose -f docker-compose.telegram.yml up -d
-    docker-compose -f docker-compose.bot.yml up -d
+    docker compose -f docker-compose.telegram.yml up -d
+    docker compose -f docker-compose.bot.yml up -d
     ```
 
 A questo punto, il bot sarà online e pronto a ricevere file!
