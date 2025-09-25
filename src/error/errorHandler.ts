@@ -11,10 +11,11 @@ export const errorHandler = (error: unknown): string => {
 
   if (isAxiosError(error)) {
     const message = error.response?.data || error.message;
+    const cause = error.cause || `N/A`;
     if (message.includes("Illegal file extension")) {
-      defaultMessage = `⚠️ Illegal file extension.`;
+      defaultMessage = `⚠️ File extension not allowed.`;
     }
-    logger.error(`❌ Axios Error: ${message}`);
+    logger.error(`❌ Axios Error [${error.status} - ${error.code}]: ${message} [Cause: ${cause}]`);
   } else {
     const message = (error as Error).message;
     logger.error(`❌ Error: ${message}`);
