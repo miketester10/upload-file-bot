@@ -5,7 +5,7 @@ import { logger } from "./logger/logger";
 import { errorHandler } from "./error/errorHandler";
 import { prepareFilePath } from "./utility/prepareFilePath";
 import { cleanupFile } from "./utility/cleanupFile";
-config();
+config({quiet: true});
 
 const BOT_TOKEN = process.env.BOT_TOKEN!;
 const LOCAL_BOT_API = process.env.LOCAL_BOT_API!;
