@@ -1,11 +1,11 @@
-import { blockquote, bold, Bot, code, format, italic, underline } from "gramio";
+import { blockquote, bold, Bot, code, format, italic, underline, strikethrough } from "gramio";
 import { config } from "dotenv";
 import { uploadFile } from "./utility/uploadFile";
 import { logger } from "./logger/logger";
 import { errorHandler } from "./error/errorHandler";
 import { prepareFilePath } from "./utility/prepareFilePath";
 import { cleanupFile } from "./utility/cleanupFile";
-config({quiet: true});
+config({ quiet: true });
 
 const BOT_TOKEN = process.env.BOT_TOKEN!;
 const LOCAL_BOT_API = process.env.LOCAL_BOT_API!;
@@ -41,7 +41,7 @@ bot.on("message", async (ctx) => {
   }
 
   // Messaggio di stato
-  const statusMessage = await ctx.reply(`[⏳] Download file...`);
+  const statusMessage = await ctx.reply(format`${bold(`[ ⏳ ] Download file...`)}`);
 
   let finalPath: string | undefined;
   try {
@@ -52,13 +52,13 @@ bot.on("message", async (ctx) => {
     finalPath = await prepareFilePath(downloadedFile.file_path!, file.fileName, BOT_TOKEN);
 
     // Aggiorna messaggio di stato
-    await ctx.editMessageText(format`${bold(`[✅] Download file`)}\n[⏳] Upload file...`, { chat_id: ctx.chat.id, message_id: statusMessage.id });
+    await ctx.editMessageText(format`[✅] ${strikethrough(`Download file`)}\n${bold(`[ ⏳ ] Upload file...`)}`, { chat_id: ctx.chat.id, message_id: statusMessage.id });
 
     // Upload del file (filebin.net)
     const url = await uploadFile(finalPath, file.fileName);
 
     // Aggiorna messaggio di stato
-    await ctx.editMessageText(format`${bold(`[✅] Download file\n[✅] Upload file`)}\n\n${italic(underline(`🔗 Here's the link:`))}\n${url}`, {
+    await ctx.editMessageText(format`[✅] ${strikethrough(`Download file`)}\n[✅] ${strikethrough(`Upload file`)}\n\n${italic(underline(`🔗 Here's the link:`))}\n${url}`, {
       chat_id: ctx.chat.id,
       message_id: statusMessage.id,
       link_preview_options: { is_disabled: true },
