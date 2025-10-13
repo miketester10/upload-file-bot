@@ -3,6 +3,7 @@ import { createReadStream } from "fs"; // per createReadStream
 import fsp from "fs/promises"; // per stat asincrono
 import prettyBytes from "pretty-bytes";
 import { fileTypeFromBuffer } from "file-type";
+import { nanoid } from "nanoid";
 import { logger } from "../logger/logger";
 
 /**
@@ -12,7 +13,8 @@ import { logger } from "../logger/logger";
  * @param binName Il nome del "bin" (cartella) su filebin in cui caricare il file.
  * @returns L'URL del file caricato.
  */
-export const uploadFile = async (filePath: string, fileName: string, binName: string = "upload_tg"): Promise<string> => {
+export const uploadFile = async (filePath: string, fileName: string, userId: number): Promise<string> => {
+  const binName = `${userId}-${nanoid(8)}`;
   const url = `https://filebin.net/${binName}/${fileName}`;
 
   try {

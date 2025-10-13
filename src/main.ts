@@ -14,9 +14,9 @@ const bot = new Bot(BOT_TOKEN, { api: { baseURL: LOCAL_BOT_API } });
 
 // Gestionre comando /start
 bot.command("start", async (ctx) => {
-  const telegramId = ctx.from?.id!;
-  const name = ctx.from?.firstName!;
-  const username = ctx.from?.username || "N/A";
+  const telegramId = ctx.from.id;
+  const name = ctx.from.firstName;
+  const username = ctx.from.username || "N/A";
 
   logger.info(`Bot avviato da: ${name} -  Username: ${username} - Telegram ID: ${telegramId}`);
 
@@ -33,6 +33,8 @@ bot.command("start", async (ctx) => {
 
 // Gestione dei messaggi con file
 bot.on("message", async (ctx) => {
+  const telegramId = ctx.from.id;
+
   // Controllo che il file è presente nel messaggio inviato e che abbia un nome
   const file = ctx.document;
   if (!file) return;
@@ -55,7 +57,7 @@ bot.on("message", async (ctx) => {
     await ctx.editMessageText(format`[✅] ${strikethrough(`Download file`)}\n${bold(`[ ⏳ ] Upload file...`)}`, { chat_id: ctx.chat.id, message_id: statusMessage.id });
 
     // Upload del file (filebin.net)
-    const url = await uploadFile(finalPath, file.fileName);
+    const url = await uploadFile(finalPath, file.fileName, telegramId);
 
     // Aggiorna messaggio di stato
     await ctx.editMessageText(format`[✅] ${strikethrough(`Download file`)}\n[✅] ${strikethrough(`Upload file`)}\n\n${italic(underline(`🔗 Here's the link:`))}\n${url}`, {
