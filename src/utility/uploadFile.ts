@@ -15,7 +15,8 @@ import { logger } from "../logger/logger";
  */
 export const uploadFile = async (filePath: string, fileName: string, userId: number): Promise<string> => {
   const binName = `${userId}-${nanoid(8)}`;
-  const url = `https://filebin.net/${binName}/${fileName}`;
+  const encodedFileName = encodeURIComponent(fileName);
+  const url = `https://filebin.net/${binName}/${encodedFileName}`;
 
   try {
     // Crea lo stream del file
