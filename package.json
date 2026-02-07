@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@types/progress-stream": "^2.0.5",
     "axios": "^1.12.2",
     "dotenv": "^17.2.2",
     "file-type": "^21.0.0",
@@ -20,7 +21,9 @@
     "nanoid": "^5.1.6",
     "pino": "^9.11.0",
     "pino-pretty": "^13.1.1",
-    "pretty-bytes": "^7.1.0"
+    "pretty-bytes": "^7.1.0",
+    "pretty-ms": "^9.3.0",
+    "progress-stream": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
