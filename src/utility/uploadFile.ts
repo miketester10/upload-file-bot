@@ -1,4 +1,4 @@
-import got from "got";
+import got, { GotError } from "got";
 import { createReadStream } from "fs";
 import fsp from "fs/promises";
 import progress from "progress-stream";
@@ -7,6 +7,9 @@ import prettyMs from "pretty-ms";
 import { fileTypeFromFile } from "file-type";
 import { nanoid } from "nanoid";
 import { logger } from "../logger/logger";
+import { renderProgressBar } from "./renderProgressBar";
+import { MyMessageContext } from "../interfaces";
+import { bold, code, format, underline } from "gramio";
 
 /**
  * Carica un file su filebin.net con upload streaming reale.
@@ -14,10 +17,13 @@ import { logger } from "../logger/logger";
  *
  * @param filePath Percorso del file da caricare
  * @param fileName Nome che il file avrà su filebin
- * @param userId ID utente (usato per il bin)
+ * @param userId ID utente Telegram
+ * @param chatId ID chat Telegram
+ * @param messageId ID del messaggio di stato da aggiornare su Telegram durante l'upload
+ * @param ctx Context di Telegram per aggiornare il messaggio di stato
  * @returns URL del file caricato
  */
-export const uploadFile = async (filePath: string, fileName: string, userId: number): Promise<string> => {
+export const uploadFile = async (filePath: string, fileName: string, userId: number, chatId: number, messageId: number, ctx: MyMessageContext): Promise<string> => {
   const binName = `${userId}-${nanoid(8)}`;
   const encodedFileName = encodeURIComponent(fileName);
   const url = `https://filebin.net/${binName}/${encodedFileName}`;
@@ -41,7 +47,7 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
      * Stream di lettura del file
      * NON legge nulla finché qualcuno non consuma i dati
      */
-    const fileStream = createReadStream(filePath);
+    const fileReadStream = createReadStream(filePath);
 
     /**
      * Stream intermedio che misura:
@@ -50,18 +56,24 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
      * - ETA
      * - byte trasferiti
      */
-    const progStream = progress({
+    const progressStream = progress({
       length: fileSize,
-      time: 100, // update ogni 100ms
+      time: 600, // update ogni 1000ms-> log ogni secondo
     });
 
-    progStream.on("progress", (p) => {
+    progressStream.on("progress", async (p) => {
       const percent = Math.round(p.percentage);
       const transferred = prettyBytes(p.transferred);
       const speed = `${prettyBytes(p.speed)}/s`;
       const eta = prettyMs(p.eta * 1000);
+      const bar = renderProgressBar(percent);
 
-      logger.info(`${percent}% | ${transferred} | ${speed} | ETA ${eta}`);
+      await ctx
+        .editMessageText(format`${bold("[ ⬆️ ] Upload File")}\n\n${code(`${bar}\n${percent}% | ${transferred} | ${speed} | ETA: ${eta}`)}`, {
+          chat_id: chatId,
+          message_id: messageId,
+        })
+        .catch((err) => {}); // Ignora errori di edit (es. Bad Request: message is not modified)
     });
 
     /**
@@ -85,18 +97,18 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
      * - l'upload non parte
      * - il progress non esiste
      */
-    fileStream.pipe(progStream).pipe(uploadStream);
+    fileReadStream.pipe(progressStream).pipe(uploadStream);
 
     /**
      * Attende la risposta del server
      */
     await new Promise<void>((resolve, reject) => {
-      uploadStream.on("response", (res) => {
-        logger.info(`Upload completato ✔️  Status ${res.statusCode}`);
+      uploadStream.on("finish", () => {
+        logger.info(`Upload completato ✔️`);
         resolve();
       });
 
-      uploadStream.on("error", (err) => {
+      uploadStream.on("error", (err: GotError) => {
         reject(err);
       });
     });
