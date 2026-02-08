@@ -19,7 +19,7 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
   const url = `https://filebin.net/${binName}/${encodedFileName}`;
 
   try {
-    // Crea lo stream del file
+    // Crea lo stream di lettura del file
     const fileStream = createReadStream(filePath);
 
     // Ottiene la dimensione del file in modo asincrono

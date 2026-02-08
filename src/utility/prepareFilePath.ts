@@ -1,7 +1,6 @@
 import { join } from "path";
 import fsp from "fs/promises";
 import { existsSync } from "fs";
-import { logger } from "../logger/logger";
 
 const CONTAINER_DATA_PATH = join(process.cwd(), "container_data");
 if (!existsSync(CONTAINER_DATA_PATH)) {
