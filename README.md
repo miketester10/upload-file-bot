@@ -9,7 +9,7 @@ Il bot è stato sviluppato in **TypeScript** e containerizzato con **Docker** pe
 ## ✨ Caratteristiche
 
 - **Upload Semplice**: Invia un documento al bot e ricevi un link per condividerlo.
-- **Messaggi di Stato**: Il bot fornisce feedback in tempo reale sullo stato del download e dell'upload.
+- **Feedback Visivo**: Animazioni di progresso ("aesthetic") per download e upload, per un'esperienza utente moderna e reattiva.
 - **Pulizia Automatica**: I file vengono eliminati dal server dopo l'upload per non occupare spazio.
 - **Architettura Robusta**: Codice modulare, gestione centralizzata degli errori e logging dettagliato.
 - **Containerizzato con Docker**: Pronto per il deployment su qualsiasi server con Docker, con una gestione ottimizzata delle risorse.
@@ -98,11 +98,15 @@ A questo punto, il bot sarà online e pronto a ricevere file!
 ```
 .
 ├── container_data/               # Volume montato da docker-compose.telegram.yml
-├── src/                          # Codice sorgente TypeScript
-│   ├── main.ts                   # Punto di ingresso e logica principale del bot
+├── src/                          # Codice sorgente del bot
 │   ├── error/                    # Gestione centralizzata degli errori
-│   ├── logger/                   # Configurazione del logger (Pino)
-│   └── utility/                  # Funzioni di utilità (upload, pulizia, etc.)
+│   ├── logger/                   # Logging
+│   ├── utility/                  # Funzioni di utilità
+│   │   ├── animation.ts          # Gestione animazioni di caricamento
+│   │   ├── cleanupFile.ts        # Rimozione file locali
+│   │   ├── prepareFilePath.ts    # Gestione percorsi file scaricati
+│   │   └── uploadFile.ts         # Logica di upload su Filebin
+│   └── main.ts                   # Punto di ingresso del bot
 ├── .env.example                  # File di esempio per le variabili d'ambiente
 ├── docker-compose.bot.yml        # Definizione del servizio del bot
 ├── docker-compose.telegram.yml   # Definizione del servizio API di Telegram
