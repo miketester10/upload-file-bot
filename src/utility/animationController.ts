@@ -1,3 +1,5 @@
+import { logger } from "../logger";
+
 export const FRAMES = ["●∙∙", "∙●∙", "∙∙●"];
 
 interface OnFrameCallback {
@@ -13,9 +15,9 @@ export class AnimationController {
    *
    * @param onFrameCallback Funzione asincrona chiamata ad ogni frame. Riceve il frame corrente come stringa.
    * @param frames Array di stringhe che rappresentano i frame dell'animazione. Default: FRAMES predefiniti.
-   * @param intervalMs Intervallo in millisecondi tra i frame. Default: 200ms.
+   * @param intervalMs Intervallo in millisecondi tra i frame. Default: 600ms.
    */
-  start(onFrameCallback: OnFrameCallback, frames: string[] = FRAMES, intervalMs: number = 200): void {
+  start(onFrameCallback: OnFrameCallback, frames: string[] = FRAMES, intervalMs: number = 600): void {
     this.stop(); // Assicura che non ci siano animazioni precedenti in corso su questa istanza
     let frameIndex = 0;
     this.interval = setInterval(async () => {
@@ -24,7 +26,8 @@ export class AnimationController {
       try {
         await onFrameCallback(frame);
       } catch (e) {
-        // Ignora errori (es. rate limit o errori di rete temporanei)
+        // Ignora errori (es. rate limit o errori di rete temporanei o messaggio non modificabile)
+        logger.warn((e as Error).message);
       }
     }, intervalMs);
   }
