@@ -1,4 +1,4 @@
-export const FRAMES = ["▰▱▱▱▱▱▱", "▰▰▱▱▱▱▱", "▰▰▰▱▱▱▱", "▰▰▰▰▱▱▱", "▰▰▰▰▰▱▱", "▰▰▰▰▰▰▱", "▰▰▰▰▰▰▰"];
+export const FRAMES = ["●∙∙", "∙●∙", "∙∙●"];
 
 interface OnFrameCallback {
   (frame: string): Promise<void>;
@@ -13,9 +13,9 @@ export class AnimationController {
    *
    * @param onFrameCallback Funzione asincrona chiamata ad ogni frame. Riceve il frame corrente come stringa.
    * @param frames Array di stringhe che rappresentano i frame dell'animazione. Default: FRAMES predefiniti.
-   * @param intervalMs Intervallo in millisecondi tra i frame. Default: 800ms.
+   * @param intervalMs Intervallo in millisecondi tra i frame. Default: 200ms.
    */
-  start(onFrameCallback: OnFrameCallback, frames: string[] = FRAMES, intervalMs: number = 800): void {
+  start(onFrameCallback: OnFrameCallback, frames: string[] = FRAMES, intervalMs: number = 200): void {
     this.stop(); // Assicura che non ci siano animazioni precedenti in corso su questa istanza
     let frameIndex = 0;
     this.interval = setInterval(async () => {

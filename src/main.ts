@@ -41,7 +41,7 @@ bot.on("message", async (ctx) => {
   }
 
   // Messaggio di stato iniziale
-  const statusMessage = await ctx.reply(format`${bold(`[ ${FRAMES[0]} ] Download file...`)}`);
+  const statusMessage = await ctx.reply(format`${bold(`[ ${FRAMES[0]} ] Download file`)}`);
 
   // Istanze per gestire le animazioni
   const downloadAnimation = new AnimationController();
@@ -49,7 +49,7 @@ bot.on("message", async (ctx) => {
 
   // Avvia animazione Download
   downloadAnimation.start(async (frame) => {
-    await ctx.editMessageText(format`${bold(`[ ${frame} ] Download file...`)}`, {
+    await ctx.editMessageText(format`${bold(`[ ${frame} ] Download file`)}`, {
       chat_id: ctx.chat.id,
       message_id: statusMessage.id,
     });
@@ -67,11 +67,11 @@ bot.on("message", async (ctx) => {
     downloadAnimation.stop();
 
     // Aggiorna messaggio di stato prima dell'upload e avvia animazione upload
-    await ctx.editMessageText(format`[✅] ${strikethrough(`Download file`)}\n${bold(`[ ${FRAMES[0]} ] Upload file...`)}`, { chat_id: ctx.chat.id, message_id: statusMessage.id });
+    await ctx.editMessageText(format`[✅] ${strikethrough(`Download file`)}\n${bold(`[ ${FRAMES[0]} ] Upload file`)}`, { chat_id: ctx.chat.id, message_id: statusMessage.id });
 
     // Avvia animazione Upload
     uploadAnimation.start(async (frame) => {
-      await ctx.editMessageText(format`[✅] ${strikethrough(`Download file`)}\n${bold(`[ ${frame} ] Upload file...`)}`, {
+      await ctx.editMessageText(format`[✅] ${strikethrough(`Download file`)}\n${bold(`[ ${frame} ] Upload file`)}`, {
         chat_id: ctx.chat.id,
         message_id: statusMessage.id,
       });
@@ -93,7 +93,6 @@ bot.on("message", async (ctx) => {
     // Ferma le animazioni in caso di errore
     downloadAnimation.stop();
     uploadAnimation.stop();
-
     // Gestione dell'errore
     const errorMessage = errorHandler(error);
     await ctx.editMessageText(format`${code(errorMessage)}`, { chat_id: ctx.chat.id, message_id: statusMessage.id });
