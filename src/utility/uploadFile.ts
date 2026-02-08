@@ -62,15 +62,15 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
     });
 
     progressStream.on("progress", async (p) => {
-      const percent = Math.round(p.percentage);
+      const percentage = Math.round(p.percentage);
       const transferred = prettyBytes(p.transferred);
       const speed = `${prettyBytes(p.speed)}/s`;
       const eta = prettyMs(p.eta * 1000);
-      const bar = renderProgressBar(percent);
+      const bar = renderProgressBar(percentage);
 
       // Aggiorna il messaggio di stato su Telegram con le nuove informazioni di progresso ogni 600ms (per evitare rate limit di Telegram, non scendere sotto i 500ms)
       await ctx
-        .editMessageText(format`${bold("[ ⬆️ ] Upload File")}\n\n${code(`${bar}\n${percent}% | ${transferred} | ${speed} | ETA: ${eta}`)}`, {
+        .editMessageText(format`${bold("[ ⬆️ ] Upload File")}\n\n${code(`${bar}\n${percentage}% | ${transferred} | ${speed} | ETA: ${eta}`)}`, {
           chat_id: chatId,
           message_id: messageId,
         })
