@@ -9,9 +9,10 @@ Il bot è stato sviluppato in **TypeScript** e containerizzato con **Docker** pe
 ## ✨ Caratteristiche
 
 - **Upload Semplice**: Invia un documento al bot e ricevi un link per condividerlo.
+- **Link Brevi**: Integrazione con TinyURL per generare link compatti e facili da condividere.
 - **Feedback Visivo**: Animazioni di progresso ("aesthetic") per download e upload, per un'esperienza utente moderna e reattiva.
 - **Pulizia Automatica**: I file vengono eliminati dal server dopo l'upload per non occupare spazio.
-- **Architettura Robusta**: Codice modulare, gestione centralizzata degli errori e logging dettagliato.
+- **Architettura Robusta**: Codice modulare, gestione centralizzata degli errori (`src/error`) e logging dettagliato (`src/logger`).
 - **Containerizzato con Docker**: Pronto per il deployment su qualsiasi server con Docker, con una gestione ottimizzata delle risorse.
 
 ---
@@ -22,6 +23,7 @@ Il bot è stato sviluppato in **TypeScript** e containerizzato con **Docker** pe
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - Un account Telegram e le credenziali `API_ID` e `API_HASH` (ottenibili da [my.telegram.org](https://my.telegram.org)).
 - Un token per il bot (ottenibile parlando con [@BotFather](https://t.me/BotFather) su Telegram).
+- (Opzionale) Una API Key per TinyURL se si desidera accorciare i link.
 
 ---
 
@@ -56,7 +58,7 @@ Il bot è stato sviluppato in **TypeScript** e containerizzato con **Docker** pe
 
     # TinyURL (per generare URL brevi)
     TINYURL_API_URL=https://api.tinyurl.com/create
-    TINYURL_API_KEY=
+    TINYURL_API_KEY=LaTuaChiaveTinyUrl
     ```
 
 3.  **Creare la rete Docker**
@@ -103,12 +105,16 @@ A questo punto, il bot sarà online e pronto a ricevere file!
 .
 ├── container_data/               # Volume montato da docker-compose.telegram.yml
 ├── src/                          # Codice sorgente del bot
-│   ├── error/                    # Gestione centralizzata degli errori
-│   ├── logger/                   # Logging
+│   ├── error/                    # Gestione centralizzata degli errori e classi personalizzate
+│   ├── interfaces/               # Definizioni dei tipi e interfacce TS
+│   ├── logger/                   # Configurazione del logger (Pino)
 │   ├── utility/                  # Funzioni di utilità
-│   │   ├── animation.ts          # Gestione animazioni di caricamento
+│   │   ├── animationController.ts # Gestione animazioni di progresso
 │   │   ├── cleanupFile.ts        # Rimozione file locali
+│   │   ├── downloadFile.ts       # Logica di download da Telegram Locale
+│   │   ├── generateShortUrl.ts   # Integrazione con API TinyURL
 │   │   ├── prepareFilePath.ts    # Gestione percorsi file scaricati
+│   │   ├── renderProgressBar.ts  # Visualizzazione barra di caricamento
 │   │   └── uploadFile.ts         # Logica di upload su Filebin
 │   └── main.ts                   # Punto di ingresso del bot
 ├── .env.example                  # File di esempio per le variabili d'ambiente
