@@ -1,5 +1,5 @@
-import { blockquote, bold, Bot, code, format, italic, underline, strikethrough } from "gramio";
-import { downloadFile, uploadFile, cleanupFile } from "./utility";
+import { blockquote, bold, Bot, code, format, italic, underline } from "gramio";
+import { FRAMES, AnimationController, downloadFile, uploadFile, cleanupFile } from "./utility";
 import { errorHandler } from "./error";
 import { logger } from "./logger";
 import { config } from "dotenv";
@@ -42,12 +42,24 @@ bot.on("message", async (ctx) => {
   }
 
   // Messaggio di stato iniziale
-  const statusMessage = await ctx.reply(format`${bold("[ ⬇️ ] Download File")}`);
+  const statusMessage = await ctx.reply(format`${bold(`[ ${FRAMES[0]} ] Download file`)}`);
+
+  // Istanza per gestire animazione durante il download
+  const downloadAnimation = new AnimationController();
+  downloadAnimation.start(async (frame) => {
+    await ctx.editMessageText(format`${bold(`[ ${frame} ] Download file`)}`, {
+      chat_id: chatId,
+      message_id: statusMessage.id,
+    });
+  });
 
   let filePath: string | undefined;
   try {
-    // Download del file da Telegram nella cartella tmp
+    // Download del file dall'API di Telegram
     filePath = await downloadFile(file.fileId, file.fileName);
+
+    // Ferma l'animazione di download
+    downloadAnimation.stop();
 
     // Upload del file su filebin.net
     const url = await uploadFile(filePath, file.fileName, userId, chatId, statusMessage.id, ctx);
@@ -59,6 +71,8 @@ bot.on("message", async (ctx) => {
       link_preview_options: { is_disabled: true },
     });
   } catch (error) {
+    // Ferma l'animazione in caso di errore
+    downloadAnimation.stop();
     // Gestione dell'errore
     const errorMessage = errorHandler(error);
     await ctx.editMessageText(format`${code(errorMessage)}`, { chat_id: chatId, message_id: statusMessage.id });

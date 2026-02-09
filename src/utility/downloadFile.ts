@@ -7,6 +7,13 @@ config({ quiet: true });
 
 const BOT_TOKEN = process.env.BOT_TOKEN!;
 
+/**
+ * Scarica un file dall'API di Telegram, rinomina il file scaricato con il suo nome originale
+ * e lo sposta nella cartella dei documenti del bot.
+ * @param fileId L'ID del file da scaricare.
+ * @param fileName Il nome originale del file.
+ * @returns Il percorso finale del file rinominato.
+ */
 export const downloadFile = async (fileId: string, fileName: string): Promise<string> => {
   try {
     const getFileUrl = `http://localhost:8081/bot${BOT_TOKEN}/getFile?file_id=${fileId}`;
