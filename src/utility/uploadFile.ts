@@ -11,6 +11,7 @@ import { renderProgressBar } from "./renderProgressBar";
 import { MyMessageContext } from "../interfaces";
 import { bold, code, format } from "gramio";
 import { IncomingMessage } from "http";
+import { generateShortUrl } from "./generateShortUrl";
 
 /**
  * Carica un file su filebin.net con upload streaming reale.
@@ -115,7 +116,7 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
       });
     });
 
-    return url;
+    return generateShortUrl(url);
   } catch (error) {
     logger.error(`❌ Errore durante l'upload: ${(error as Error).message}`);
     throw error;

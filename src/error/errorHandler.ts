@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { HTTPError } from "got";
 import { logger } from "../logger/logger";
 
@@ -10,7 +11,14 @@ export const errorHandler = (error: unknown): string => {
   let defaultMessage = `❌ An error occurred. Please try again.`;
 
   try {
-    if (error instanceof HTTPError) {
+    if (isAxiosError(error)) {
+      const status = error.response?.status ?? "N/A";
+      const code = error.code ?? "N/A";
+      const message = error.response?.data || error.message;
+
+      logger.error(`❌ Axios Error [${status} - ${code}]:`);
+      logger.error(message);
+    } else if (error instanceof HTTPError) {
       const status = error.response?.statusCode ?? "N/A";
       const code = error.code ?? "N/A";
       const message = error.response?.body || error.message;

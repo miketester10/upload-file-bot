@@ -53,6 +53,10 @@ Il bot è stato sviluppato in **TypeScript** e containerizzato con **Docker** pe
 
     # URL del server API locale di Telegram (corrisponde al servizio Docker)
     LOCAL_BOT_API=http://TelegramLocalAPI:8081
+
+    # TinyURL (per generare URL brevi)
+    TINYURL_API_URL=https://api.tinyurl.com/create
+    TINYURL_API_KEY=
     ```
 
 3.  **Creare la rete Docker**
