@@ -1,5 +1,5 @@
 import { blockquote, bold, Bot, code, format, italic, underline, strikethrough } from "gramio";
-import { FRAMES, AnimationController, prepareFilePath, uploadFile, cleanupFile } from "./utility";
+import { downloadFile, uploadFile, cleanupFile } from "./utility";
 import { errorHandler } from "./error";
 import { logger } from "./logger";
 import { config } from "dotenv";
@@ -42,32 +42,15 @@ bot.on("message", async (ctx) => {
   }
 
   // Messaggio di stato iniziale
-  const statusMessage = await ctx.reply(format`${bold(`[ ${FRAMES[0]} ] Download file`)}`);
+  const statusMessage = await ctx.reply(format`${bold("[ ⬇️ ] Download File")}`);
 
-  // Istanze per gestire le animazioni
-  const downloadAnimation = new AnimationController();
-
-  // Avvia animazione Download
-  downloadAnimation.start(async (frame) => {
-    await ctx.editMessageText(format`${bold(`[ ${frame} ] Download file`)}`, {
-      chat_id: chatId,
-      message_id: statusMessage.id,
-    });
-  });
-
-  let finalPath: string | undefined;
+  let filePath: string | undefined;
   try {
-    // Download del file dall' API locale di Telegram
-    const downloadedFile = await bot.api.getFile({ file_id: file.fileId });
+    // Download del file da Telegram nella cartella tmp
+    filePath = await downloadFile(file.fileId, file.fileName);
 
-    // Costruisce il percorso finale e rinomina il file
-    finalPath = await prepareFilePath(downloadedFile.file_path!, file.fileName, BOT_TOKEN);
-
-    // Ferma l'animazione di download
-    downloadAnimation.stop();
-
-    // Upload del file (filebin.net)
-    const url = await uploadFile(finalPath, file.fileName, userId, chatId, statusMessage.id, ctx);
+    // Upload del file su filebin.net
+    const url = await uploadFile(filePath, file.fileName, userId, chatId, statusMessage.id, ctx);
 
     // Aggiorna messaggio di stato finale
     await ctx.editMessageText(format`${italic(underline(`🔗 Here's the link:`))}\n${url}`, {
@@ -76,17 +59,12 @@ bot.on("message", async (ctx) => {
       link_preview_options: { is_disabled: true },
     });
   } catch (error) {
-    // Ferma le animazioni in caso di errore
-    downloadAnimation.stop();
-
     // Gestione dell'errore
     const errorMessage = errorHandler(error);
     await ctx.editMessageText(format`${code(errorMessage)}`, { chat_id: chatId, message_id: statusMessage.id });
   } finally {
-    // Cleanup: elimina il file locale se esiste
-    await cleanupFile(finalPath);
-    // Assicuriamoci che siano fermate
-    downloadAnimation.stop();
+    // Cleanup: elimina il file dalla cartella tmp dopo l'upload (o in caso di errore), se esiste
+    await cleanupFile(filePath);
   }
 });
 

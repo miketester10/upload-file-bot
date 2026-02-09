@@ -10,7 +10,7 @@ if (!existsSync(CONTAINER_DATA_PATH)) {
 /**
  * Costruisce il percorso del file, rinomina il file scaricato con il suo nome originale
  * e lo sposta nella cartella dei documenti del bot.
- * @param downloadedFilePath Il percorso del file scaricato dall'API Telegram locale
+ * @param downloadedFilePath Il percorso del file scaricato dall'API Telegram locale all'interno del container Docker.
  * @param originalName Il nome originale del file.
  * @param botToken Il token del bot.
  * @returns Il percorso finale del file rinominato.

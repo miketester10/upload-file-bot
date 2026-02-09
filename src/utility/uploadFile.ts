@@ -9,7 +9,8 @@ import { nanoid } from "nanoid";
 import { logger } from "../logger/logger";
 import { renderProgressBar } from "./renderProgressBar";
 import { MyMessageContext } from "../interfaces";
-import { bold, code, format, underline } from "gramio";
+import { bold, code, format } from "gramio";
+import { IncomingMessage } from "http";
 
 /**
  * Carica un file su filebin.net con upload streaming reale.
@@ -104,8 +105,8 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
      * Attende la risposta del server
      */
     await new Promise<void>((resolve, reject) => {
-      uploadStream.on("finish", () => {
-        logger.info(`Upload completato ✔️`);
+      uploadStream.on("response", (res: IncomingMessage) => {
+        logger.info(`[${res.statusCode ?? "Unknown"}] Upload completato ✔️`);
         resolve();
       });
 
@@ -116,7 +117,7 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
 
     return url;
   } catch (error) {
-    logger.error(`Errore durante l'upload di ${fileName}: ${(error as Error).message}`);
+    logger.error(`❌ Errore durante l'upload: ${(error as Error).message}`);
     throw error;
   }
 };
