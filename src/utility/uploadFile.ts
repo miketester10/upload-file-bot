@@ -12,6 +12,7 @@ import { MyMessageContext } from "../interfaces";
 import { bold, code, format } from "gramio";
 import { IncomingMessage } from "http";
 import { generateShortUrl } from "./generateShortUrl";
+import { AppError } from "../error";
 
 /**
  * Carica un file su filebin.net con upload streaming reale.
@@ -118,7 +119,6 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
 
     return generateShortUrl(url);
   } catch (error) {
-    logger.error(`❌ Errore durante l'upload: ${(error as Error).message}`);
-    throw error;
+    throw new AppError("Upload failed", { op: "uploadFile", filePath, fileName, userId, chatId }, error);
   }
 };

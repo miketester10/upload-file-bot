@@ -14,6 +14,6 @@ export async function cleanupFile(filePath: string | undefined): Promise<void> {
       logger.error(`❌ Errore durante l'eliminazione del file: ${(error as Error).message}`);
     }
   } else {
-    logger.warn(`⚠️ File non trovato per l'eliminazione: ${filePath}`);
+    logger.debug(`File non trovato per l'eliminazione: ${filePath}`);
   }
 }

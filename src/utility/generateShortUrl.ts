@@ -14,7 +14,7 @@ export const generateShortUrl = async (longUrl: string): Promise<string> => {
     });
     return response.data.data.tiny_url;
   } catch (error) {
-    logger.error(`❌ Errore TinyURL: ${(error as Error).message}`);
+    logger.warn(`⚠️ TinyURL error: ${(error as Error).message}`);
     // fallback: restituisce il link originale se TinyURL fallisce
     return longUrl;
   }

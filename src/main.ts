@@ -1,6 +1,6 @@
 import { blockquote, bold, Bot, code, format, italic, underline } from "gramio";
 import { FRAMES, AnimationController, downloadFile, uploadFile, cleanupFile } from "./utility";
-import { errorHandler } from "./error";
+import { handleError } from "./error";
 import { logger } from "./logger";
 import { config } from "dotenv";
 config({ quiet: true });
@@ -74,8 +74,13 @@ bot.on("message", async (ctx) => {
     // Ferma l'animazione in caso di errore
     downloadAnimation.stop();
     // Gestione dell'errore
-    const errorMessage = errorHandler(error);
-    await ctx.editMessageText(format`${code(errorMessage)}`, { chat_id: chatId, message_id: statusMessage.id });
+    const userErrorMessage = handleError(error, {
+      op: "messageHandler",
+      userId,
+      chatId,
+      fileName: file.fileName,
+    });
+    await ctx.editMessageText(format`${code(userErrorMessage)}`, { chat_id: chatId, message_id: statusMessage.id });
   } finally {
     // Cleanup: elimina il file dalla cartella tmp dopo l'upload (o in caso di errore), se esiste
     await cleanupFile(filePath);
@@ -88,6 +93,6 @@ bot.on("message", async (ctx) => {
     await bot.start();
     logger.info("✅ Bot avviato con successo");
   } catch (error) {
-    logger.error(`❌ Errore durante l'avvio del bot: ${(error as Error).message}`);
+    handleError(error, { op: "botStart" });
   }
 })();
