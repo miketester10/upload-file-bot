@@ -2,6 +2,7 @@ import { blockquote, bold, Bot, code, format, italic, underline } from "gramio";
 import { FRAMES, AnimationController, downloadFile, uploadFile, cleanupFile } from "./utility";
 import { handleError } from "./error";
 import { logger } from "./logger";
+import { ErrorOperation } from "./types";
 import { config } from "dotenv";
 config({ quiet: true });
 
@@ -75,7 +76,7 @@ bot.on("message", async (ctx) => {
     downloadAnimation.stop();
     // Gestione dell'errore
     const userErrorMessage = handleError(error, {
-      op: "messageHandler",
+      op: ErrorOperation.MESSAGE_HANDLER,
       userId,
       chatId,
       fileName: file.fileName,
@@ -93,6 +94,6 @@ bot.on("message", async (ctx) => {
     await bot.start();
     logger.info("✅ Bot avviato con successo");
   } catch (error) {
-    handleError(error, { op: "botStart" });
+    handleError(error, { op: ErrorOperation.BOT_START });
   }
 })();

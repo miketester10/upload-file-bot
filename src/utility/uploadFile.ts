@@ -13,6 +13,7 @@ import { bold, code, format } from "gramio";
 import { IncomingMessage } from "http";
 import { generateShortUrl } from "./generateShortUrl";
 import { AppError } from "../error";
+import { ErrorOperation } from "../types";
 
 /**
  * Carica un file su filebin.net con upload streaming reale.
@@ -119,6 +120,6 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
 
     return generateShortUrl(url);
   } catch (error) {
-    throw new AppError("Upload failed", { op: "uploadFile", filePath, fileName, userId, chatId }, error);
+    throw new AppError("Upload failed", { op: ErrorOperation.UPLOAD_FILE, filePath, fileName, userId, chatId }, error);
   }
 };

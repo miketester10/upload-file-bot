@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AppError } from "../error";
+import { ErrorOperation } from "../types";
 import { GetFileResponse } from "../interfaces/get-file-response.interface";
 import { prepareFilePath } from "./prepareFilePath";
 import { config } from "dotenv";
@@ -25,6 +26,6 @@ export const downloadFile = async (fileId: string, fileName: string): Promise<st
 
     return finalPath;
   } catch (error) {
-    throw new AppError("Download failed", { op: "downloadFile", fileId, fileName }, error);
+    throw new AppError("Download failed", { op: ErrorOperation.DOWNLOAD_FILE, fileId, fileName }, error);
   }
 };

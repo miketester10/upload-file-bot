@@ -11,7 +11,7 @@ import { AppError } from "./appError";
  * @param errorContext Contesto aggiuntivo per il logging dell'errore.
  * @returns Un messaggio user-friendly da mostrare all'utente.
  */
-export const handleError = (error: unknown, errorContext: ErrorContext = { op: "unknown" }): string => {
+export const handleError = (error: unknown, errorContext: ErrorContext): string => {
   let userErrorMessage = "❌ An error occurred. Please try again.";
 
   try {
