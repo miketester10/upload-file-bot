@@ -15,9 +15,9 @@ export const handleError = (error: unknown, errorContext: ErrorContext): string 
   let userErrorMessage = "❌ An error occurred. Please try again.";
 
   try {
-    const origin = error instanceof AppError ? error.context : undefined;
+    const rootContext = error instanceof AppError ? error.rootContext : undefined;
     const rootError = error instanceof AppError ? error.rootError : error;
-    const logContext = origin ? { context: errorContext, origin } : { context: errorContext };
+    const logContext = rootContext ? { context: errorContext, rootContext } : { context: errorContext };
 
     if (isAxiosError(rootError)) {
       logger.error({ err: rootError, status: rootError.response?.status, ...logContext }, "Axios error");

@@ -13,7 +13,7 @@ export class AppError<T extends ErrorContext = ErrorContext> extends Error {
 
   constructor(
     message: string,
-    public readonly context: T,
+    public readonly rootContext: T,
     public readonly rootError: unknown,
   ) {
     super(message);
