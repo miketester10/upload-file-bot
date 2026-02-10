@@ -108,11 +108,13 @@ A questo punto, il bot sarà online e pronto a ricevere file!
 │   ├── error/                    # Gestione centralizzata degli errori e classi personalizzate
 │   ├── interfaces/               # Definizioni dei tipi e interfacce TS
 │   ├── logger/                   # Configurazione del logger (Pino)
+│   ├── types/                    # Definizioni dei tipi (es. ErrorContext)
 │   ├── utility/                  # Funzioni di utilità
 │   │   ├── animationController.ts # Gestione animazioni di progresso
 │   │   ├── cleanupFile.ts        # Rimozione file locali
 │   │   ├── downloadFile.ts       # Logica di download da Telegram Locale
 │   │   ├── generateShortUrl.ts   # Integrazione con API TinyURL
+│   │   ├── index.ts              # Barrel file per esportare le utility
 │   │   ├── prepareFilePath.ts    # Gestione percorsi file scaricati
 │   │   ├── renderProgressBar.ts  # Visualizzazione barra di caricamento
 │   │   └── uploadFile.ts         # Logica di upload su Filebin
