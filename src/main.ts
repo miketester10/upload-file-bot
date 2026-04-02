@@ -4,10 +4,13 @@ import { handleError } from "./error";
 import { logger } from "./logger";
 import { ErrorOperation } from "./types";
 import { config } from "dotenv";
+import prettyBytes from "pretty-bytes";
 config({ quiet: true });
 
 const BOT_TOKEN = process.env.BOT_TOKEN!;
 const LOCAL_BOT_API = process.env.LOCAL_BOT_API!;
+const BOT_OWNER_TELEGRAM_ID = parseInt(process.env.BOT_OWNER_TELEGRAM_ID!);
+const MAX_FILE_SIZE_BYTES = parseInt(process.env.MAX_FILE_SIZE_BYTES!);
 
 const bot = new Bot(BOT_TOKEN, { api: { baseURL: LOCAL_BOT_API } });
 
@@ -34,12 +37,19 @@ bot.command("start", async (ctx) => {
 bot.on("message", async (ctx) => {
   const userId = ctx.from.id;
   const chatId = ctx.chat.id;
+  const isBotOwner = userId === BOT_OWNER_TELEGRAM_ID;
 
-  // Controllo che il file è presente nel messaggio inviato e che abbia un nome
+  // Controllo che il file è presente nel messaggio inviato e che abbia un nome ed una dimensione valida
   const file = ctx.document;
+  const fileName = file?.fileName;
+  const fileSize = file?.fileSize;
   if (!file) return;
-  if (!file.fileName) {
-    return await ctx.reply(format`${code(`❌ File must have a name.`)}`);
+  if (!fileName || !fileSize) {
+    return await ctx.reply(format`${code(`❌ File must have a name and a valid size.`)}`);
+  }
+  if (!isBotOwner && fileSize > MAX_FILE_SIZE_BYTES) {
+    logger.warn(`File rejected: ${fileName} | Size: ${prettyBytes(fileSize)}`);
+    return await ctx.reply(format`${code(`❌ Files cannot be larger than ${prettyBytes(MAX_FILE_SIZE_BYTES)}.`)}`);
   }
 
   // Messaggio di stato iniziale
@@ -57,13 +67,13 @@ bot.on("message", async (ctx) => {
   let filePath: string | undefined;
   try {
     // Download del file dall'API di Telegram
-    filePath = await downloadFile(file.fileId, file.fileName);
+    filePath = await downloadFile(file.fileId, fileName);
 
     // Ferma l'animazione di download
     downloadAnimation.stop();
 
     // Upload del file su filebin.net
-    const url = await uploadFile(filePath, file.fileName, userId, chatId, statusMessage.id, ctx);
+    const url = await uploadFile(filePath, fileName, userId, chatId, statusMessage.id, ctx);
 
     // Aggiorna messaggio di stato finale
     await ctx.editMessageText(format`${italic(underline(`🔗 Here's the link:`))}\n${url}`, {
@@ -79,7 +89,7 @@ bot.on("message", async (ctx) => {
       op: ErrorOperation.MESSAGE_HANDLER,
       userId,
       chatId,
-      fileName: file.fileName,
+      fileName,
     });
     await ctx.editMessageText(format`${code(userErrorMessage)}`, { chat_id: chatId, message_id: statusMessage.id });
   } finally {

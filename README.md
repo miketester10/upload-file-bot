@@ -32,8 +32,8 @@ Il bot è stato sviluppato in **TypeScript** e containerizzato con **Docker** pe
 1.  **Clonare il repository**
 
     ```bash
-    git clone <URL_DEL_TUO_REPOSITORY>
-    cd <NOME_DELLA_CARTELLA>
+    git clone https://github.com/miketester10/upload-file-bot.git
+    cd upload-file-bot
     ```
 
 2.  **Configurare le variabili d'ambiente**
@@ -52,6 +52,11 @@ Il bot è stato sviluppato in **TypeScript** e containerizzato con **Docker** pe
 
     # Token del bot Telegram (ottenibile da @BotFather)
     BOT_TOKEN=5625854050:GbNgyvIvskIVcr_Ub2dgdfNBNsdkNSD
+    # ID Telegram del proprietario del bot (per bypassare il limite sulla dimensione dei file)
+    BOT_OWNER_TELEGRAM_ID=12345678
+
+    # Dimensione massima dei file accettati (in byte, 800MB = 800000000 bytes)
+    MAX_FILE_SIZE_BYTES=800000000
 
     # URL del server API locale di Telegram (corrisponde al servizio Docker)
     LOCAL_BOT_API=http://TelegramLocalAPI:8081
