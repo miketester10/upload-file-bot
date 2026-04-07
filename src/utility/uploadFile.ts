@@ -1,4 +1,4 @@
-import got, { GotError } from "got";
+import got from "got";
 import { createReadStream } from "fs";
 import fsp from "fs/promises";
 import progress from "progress-stream";
@@ -27,7 +27,14 @@ import { ErrorOperation } from "../types";
  * @param ctx Context di Telegram per aggiornare il messaggio di stato
  * @returns URL del file caricato
  */
-export const uploadFile = async (filePath: string, fileName: string, userId: number, chatId: number, messageId: number, ctx: MyMessageContext): Promise<string> => {
+export const uploadFile = async (
+  filePath: string,
+  fileName: string,
+  userId: number,
+  chatId: number,
+  messageId: number,
+  ctx: MyMessageContext,
+): Promise<string> => {
   const binName = `${userId}-${nanoid(8)}`;
   const encodedFileName = encodeURIComponent(fileName);
   const url = `https://filebin.net/${binName}/${encodedFileName}`;
@@ -88,7 +95,7 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
     const uploadStream = got.stream.post(url, {
       headers: {
         "Content-Type": mimetype,
-        "Content-Length": fileSize,
+        "Content-Length": fileSize.toString(),
         Accept: "*/*",
       },
     });
@@ -113,7 +120,7 @@ export const uploadFile = async (filePath: string, fileName: string, userId: num
         resolve();
       });
 
-      uploadStream.on("error", (err: GotError) => {
+      uploadStream.on("error", (err) => {
         reject(err);
       });
     });
