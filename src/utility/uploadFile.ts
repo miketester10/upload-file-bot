@@ -106,11 +106,9 @@ export const uploadFile = async (
      * così il catch esterno li intercetta correttamente.
      */
     await new Promise<void>((resolve, reject) => {
-      const handleError = (err: Error) => reject(err);
-
-      fileReadStream.once("error", (err) => handleError(err));
-      progressStream.once("error", (err) => handleError(err));
-      uploadStream.once("error", (err) => handleError(err));
+      fileReadStream.once("error", (err) => reject(err));
+      progressStream.once("error", (err) => reject(err));
+      uploadStream.once("error", (err) => reject(err));
 
       uploadStream.once("response", (res: IncomingMessage) => {
         logger.info(`[${res.statusCode ?? "Unknown"}] Upload completato ✔️`);
