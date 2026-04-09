@@ -101,30 +101,30 @@ export const uploadFile = async (
     });
 
     /**
-     * PIPE FONDAMENTALE:
-     * file → progress → socket
-     *
-     * Senza questa pipe:
-     * - il file non viene letto
-     * - l'upload non parte
-     * - il progress non esiste
-     */
-    fileReadStream.pipe(progressStream).pipe(uploadStream);
-
-    /**
-     * Attende la risposta del server
+     * Attende la risposta del server.
+     * Gli errori degli stream vengono trasformati in reject della Promise,
+     * così il catch esterno li intercetta correttamente.
      */
     await new Promise<void>((resolve, reject) => {
-      uploadStream.on("response", (res: IncomingMessage) => {
+      const handleError = (err: Error) => reject(err);
+
+      fileReadStream.once("error", (err) => handleError(err));
+      progressStream.once("error", (err) => handleError(err));
+      uploadStream.once("error", (err) => handleError(err));
+
+      uploadStream.once("response", (res: IncomingMessage) => {
         logger.info(`[${res.statusCode ?? "Unknown"}] Upload completato ✔️`);
         resolve();
       });
 
-      uploadStream.on("error", (err) => {
-        reject(err);
-      });
+      /**
+       * PIPE FONDAMENTALE:
+       * file → progress → socket
+       */
+      fileReadStream.pipe(progressStream).pipe(uploadStream);
     });
 
+    // Dopo l'upload, genera un URL corto per condividerlo facilmente su Telegram
     return generateShortUrl(url);
   } catch (error) {
     throw new AppError("Upload failed", { op: ErrorOperation.UPLOAD_FILE, filePath, fileName, userId, chatId }, error);
